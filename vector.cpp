@@ -3,7 +3,7 @@
 #include<fstream>
 #include<string>
 using namespace std;
-vector<vector<char>> a;
+vector<vector<char>> a; //This is our map fetched from map.txt
 int main()
 {
    string line;
