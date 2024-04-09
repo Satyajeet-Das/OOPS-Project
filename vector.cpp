@@ -4,6 +4,10 @@
 #include <string>
 using namespace std;
 
+class Game{
+
+};
+
 class Pacman {
     public:
     int x;
