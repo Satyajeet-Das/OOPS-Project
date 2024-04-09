@@ -15,7 +15,7 @@ class Map
 public:
     vector<vector<char>> a;
 
-    void displayMap(string filename)
+    void inialiseMap(string filename)
     {
         string line;
         ifstream map(filename); // ifstream is a predefined class and we create an object oftype ifstream
@@ -29,6 +29,9 @@ public:
             }
             a.push_back(templine);
         }
+    }
+
+    void displayMap(){
         for (vector<char> templine : a)
         {
             for (char c : templine)
@@ -64,6 +67,7 @@ int main()
     //     }
     //     cout << "\n";
     // }
-    m.displayMap("map.txt");
+    m.inialiseMap("map.txt");
+    m.displayMap();
     return 0;
 }
