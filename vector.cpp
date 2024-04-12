@@ -153,8 +153,9 @@ int main()
         if(P.dir==UP||DOWN)
         {
             Sleep(150); //increasing the delay (inbuilt from library)
+        }else{
+            Sleep(50); //delay for 40ms  (inbuilt from library)
         }
-        Sleep(100); //delay for 40ms  (inbuilt from library)
         P.PacInput();
         P.Pacmove();
     }
