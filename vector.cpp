@@ -2,22 +2,76 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <stdlib.h>
+#include <conio.h>
+#include <windows.h>
+#include <ctime>
 using namespace std;
 
-class Game{
-
+enum Directionpacman
+{
+    STOP = 0,
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN
 };
 
-class Pacman {
-    public:
+class Pacman
+{
+public:
     int x;
     int y;
+
+    Directionpacman dir;
+    void PacInput()
+    {
+        if (_kbhit())
+        {
+            switch (_getch())
+            {
+            case 'w':
+                dir = UP;
+                break;
+            case 'a':
+                dir = LEFT;
+                break;
+            case 's':
+                dir = DOWN;
+                break;
+            case 'd':
+                dir = RIGHT;
+                break;
+            }
+        }
+    }
+    void Pacmove()
+    {
+        switch (dir)
+        {
+        case UP:
+            y--;
+            cout << "the ycord" << y << "\n";
+            break;
+        case DOWN:
+            y++;
+            break;
+        case RIGHT:
+            x++;
+            break;
+        case LEFT:
+            x--;
+            break;
+        }
+    }
 };
 
 class Map
 {
 public:
     vector<vector<char>> a;
+    int height;
+    int width;
 
     void inialiseMap(string filename)
     {
@@ -33,45 +87,71 @@ public:
             }
             a.push_back(templine);
         }
+        height = a.size();
+        width = a[0].size(); // initialize the heigth and width
     }
 
-    void displayMap(){
-        for (vector<char> templine : a)
+    void displayMap(Pacman P)
+    {
+        for (int i = 0; i < a.size(); i++)
         {
-            for (char c : templine)
+            for (int j = 0; j < a[i].size(); j++) // till the size of the row
             {
-                cout << c;
+                if (i == P.y && j == P.x) // i represents the y and j represents the x
+                {
+                    cout << "P";
+                }
+                else
+                {
+                    cout << a[i][j];
+                }
             }
             cout << "\n";
         }
     }
 };
-
-
+class Game
+{
+public:
+    bool gameOver;
+    int score;
+    Game()
+    {
+        gameOver = false;
+        score = 0;
+    }
+    void clearScreen()
+    {
+        COORD cursorPosition;
+        cursorPosition.X = 0;
+        cursorPosition.Y = 0;
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPosition);
+    }
+    void logic(Map m, Pacman p)
+    {
+    }
+};
 int main()
 {
+    Game g;
     Map m;
-    // string line;
-    // ifstream map("map.txt"); // ifstream is a predefined class and we create an object oftype ifstream
-    // while (getline(map, line))
-    // {
-    //     // so currently  my line has one by one my rows
-    //     vector<char> templine;
-    //     for (char c : line) // like foreach
-    //     {
-    //         templine.push_back(c);
-    //     }
-    //     a.push_back(templine);
-    // }
-    // for (vector<char> templine : a)
-    // {
-    //     for (char c : templine)
-    //     {
-    //         cout << c;
-    //     }
-    //     cout << "\n";
-    // }
+    Pacman P;
+    P.x = 10;
+    P.y = 10;
+
     m.inialiseMap("map.txt");
-    m.displayMap();
+    while (!g.gameOver)
+    {
+        g.clearScreen();
+        m.displayMap(P);
+        if (P.dir == UP || DOWN)
+        {
+            Sleep(100); // increasing the delay (inbuilt from library)
+        }else{
+            Sleep(50); // delay for 40ms  (inbuilt from library)
+        }
+        P.PacInput();
+        P.Pacmove();
+    }
     return 0;
 }
