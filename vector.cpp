@@ -22,8 +22,8 @@ class Pacman
 public:
     int x;
     int y;
-
     Directionpacman dir;
+    
     void PacInput()
     {
         if (_kbhit())
@@ -128,15 +128,14 @@ public:
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPosition);
     }
 
-    void wallCollision(Map m, Pacman p)
+    void wallCollision(Map &m, Pacman &p)
     {
-        if(m.a[(p.x)+1][p.y]=='#' && p.dir==RIGHT)
-        {
-            p.dir=STOP;
-        }
+      
+       
+        
     }
 
-    void logic(Map m, Pacman p){
+    void logic(Map& m, Pacman& p){
         wallCollision(m, p);
     }
 };
@@ -160,8 +159,8 @@ int main()
             Sleep(50); // delay for 40ms  (inbuilt from library)
         }
         P.PacInput();
-        P.Pacmove();
         g.logic(m, P);
+        P.Pacmove();
     }
     return 0;
 }
