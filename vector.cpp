@@ -127,8 +127,17 @@ public:
         cursorPosition.Y = 0;
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPosition);
     }
-    void logic(Map m, Pacman p)
+
+    void wallCollision(Map m, Pacman p)
     {
+        if(m.a[(p.x)+1][p.y]=='#' && p.dir==RIGHT)
+        {
+            p.dir=STOP;
+        }
+    }
+
+    void logic(Map m, Pacman p){
+        wallCollision(m, p);
     }
 };
 int main()
@@ -152,6 +161,7 @@ int main()
         }
         P.PacInput();
         P.Pacmove();
+        g.logic(m, P);
     }
     return 0;
 }
