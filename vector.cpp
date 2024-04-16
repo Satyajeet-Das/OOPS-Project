@@ -22,8 +22,8 @@ class Pacman
 public:
     int x;
     int y;
-
     Directionpacman dir;
+
     void PacInput()
     {
         if (_kbhit())
@@ -116,9 +116,18 @@ public:
     int score;
     Game()
     {
-        gameOver = false;
+       gameOver = false;
         score = 0;
     }
+
+    void hideCursor() {
+        HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_CURSOR_INFO cursorInfo;
+        GetConsoleCursorInfo(consoleHandle, &cursorInfo);
+        cursorInfo.bVisible = FALSE; // Set cursor visibility to false
+        SetConsoleCursorInfo(consoleHandle, &cursorInfo);
+    }
+
     void clearScreen()
     {
         COORD cursorPosition;
@@ -168,7 +177,6 @@ public:
             // p.x++;
         }
         else if (m.a[(p.y - 1)][(p.x)] == '.' && p.dir == UP)
-
         {
             m.a[(p.y - 1)][(p.x)] = ' ';
             score += 10;
@@ -206,16 +214,17 @@ int main()
     P.x = 10;
     P.y = 10;
 
-    m.inialiseMap("map.txt");
+    g.hideCursor();
+    m.inialiseMap("map1.txt");
     while (!g.gameOver)
-    {
+    { 
         g.clearScreen();
         m.displayMap(P);
         s.showStats(g);
         
         if (P.dir == UP || P.dir == DOWN)
         {
-            Sleep(50); // increasing the delay (inbuilt from library)
+            Sleep(150); // increasing the delay (inbuilt from library)
         }
         else
         {
