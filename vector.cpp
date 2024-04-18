@@ -8,7 +8,7 @@
 #include <ctime>
 using namespace std;
 
-enum Directionpacman
+enum Direction
 {
     STOP = 0,
     LEFT,
@@ -20,9 +20,10 @@ enum Directionpacman
 class Pacman
 {
 public:
+    char pac = 'O';
     int x;
     int y;
-    Directionpacman dir;
+    Direction dirPacman;
 
     void PacInput()
     {
@@ -31,23 +32,74 @@ public:
             switch (_getch())
             {
             case 'w':
-                dir = UP;
+                dirPacman = UP;
                 break;
             case 'a':
-                dir = LEFT;
+                dirPacman = LEFT;
                 break;
             case 's':
-                dir = DOWN;
+                dirPacman = DOWN;
                 break;
             case 'd':
-                dir = RIGHT;
+                dirPacman = RIGHT;
                 break;
             }
         }
     }
     void Pacmove()
     {
-        switch (dir)
+        switch (dirPacman)
+        {
+        case UP:
+            y--;
+            break;
+        case DOWN:
+            y++;
+            break;
+        case RIGHT:
+            x++;
+            break;
+        case LEFT:
+            x--;
+            break;
+        }
+    }
+};
+class Ghost
+{
+public:
+    char ghost = '@';
+    int x, y;
+    Direction dirGhost;
+
+    void setGhostDirection()
+    {
+        srand(time(0));
+
+        int val = rand() % 4 + 1;
+        switch (val)
+        {
+        case 1:
+            dirGhost = LEFT;
+            break;
+
+        case 2:
+            dirGhost = RIGHT;
+            break;
+
+        case 3:
+            dirGhost = UP;
+            break;
+
+        case 4:
+            dirGhost = DOWN;
+            break;
+        }
+    }
+    void Ghostmove()
+    {
+
+        switch (dirGhost)
         {
         case UP:
             y--;
@@ -68,7 +120,7 @@ public:
 class Map
 {
 public:
-    vector<vector<char>> a;
+    vector<vector<char>> a; // this is 2-d vector for the map
     int height;
     int width;
 
@@ -90,7 +142,7 @@ public:
         width = a[0].size(); // initialize the heigth and width
     }
 
-    void displayMap(Pacman P)
+    void displayMap(Pacman P, Ghost gh)
     {
         for (int i = 0; i < a.size(); i++)
         {
@@ -98,8 +150,13 @@ public:
             {
                 if (i == P.y && j == P.x) // i represents the y and j represents the x
                 {
-                    cout << "O";
+                    cout << P.pac;
                 }
+                else if (i == gh.y && j == gh.x)
+                {
+                    cout << gh.ghost;
+                }
+
                 else
                 {
                     cout << a[i][j];
@@ -109,6 +166,7 @@ public:
         }
     }
 };
+
 class Game
 {
 public:
@@ -116,11 +174,17 @@ public:
     int score;
     Game()
     {
-       gameOver = false;
+        gameOver = false;
         score = 0;
     }
 
-    void hideCursor() {
+    ~Game()
+    {
+        cout << "Game Over\n";
+    }
+
+    void hideCursor()
+    {
         HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
         CONSOLE_CURSOR_INFO cursorInfo;
         GetConsoleCursorInfo(consoleHandle, &cursorInfo);
@@ -136,53 +200,75 @@ public:
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPosition);
     }
 
-    void wallCollision(Map &m, Pacman &p)
+    void wallCollision(Map &m, Pacman &p, Ghost &gh)
     {
-
-        if (m.a[(p.y)][(p.x + 1)] == '#' && p.dir == RIGHT)
+        // Pacman
+        if (m.a[(p.y)][(p.x + 1)] == '#' && p.dirPacman == RIGHT)
         {
-            p.dir = STOP;
+            p.dirPacman = STOP;
             // p.x--;
         }
-        else if (m.a[(p.y)][(p.x - 1)] == '#' && p.dir == LEFT)
+        else if (m.a[(p.y)][(p.x - 1)] == '#' && p.dirPacman == LEFT)
         {
-            p.dir = STOP;
+            p.dirPacman = STOP;
             // p.x++;
         }
-        else if (m.a[(p.y - 1)][(p.x)] == '#' && p.dir == UP)
+        else if (m.a[(p.y - 1)][(p.x)] == '#' && p.dirPacman == UP)
         {
-            p.dir = STOP;
+            p.dirPacman = STOP;
             // p.y++;
         }
-        else if (m.a[(p.y + 1)][(p.x)] == '#' && p.dir == DOWN)
+        else if (m.a[(p.y + 1)][(p.x)] == '#' && p.dirPacman == DOWN)
         {
-            p.dir = STOP;
+            p.dirPacman = STOP;
+            // p.y--;
+        }
+
+        // Ghost
+        if (m.a[(gh.y)][(gh.x + 1)] == '#' && gh.dirGhost == RIGHT)
+        {
+            gh.dirGhost = STOP;
+            // gh.x--;
+        }
+        else if (m.a[(gh.y)][(gh.x - 1)] == '#' && gh.dirGhost == LEFT)
+        {
+            gh.dirGhost = STOP;
+            // gh.x++;
+        }
+        else if (m.a[(gh.y - 1)][(gh.x)] == '#' && gh.dirGhost == UP)
+        {
+            gh.dirGhost = STOP;
+            // gh.y++;
+        }
+        else if (m.a[(gh.y + 1)][(gh.x)] == '#' && gh.dirGhost == DOWN)
+        {
+            gh.dirGhost = STOP;
             // p.y--;
         }
     }
     void fruitCollision(Map &m, Pacman &p)
     {
 
-        if (m.a[(p.y)][(p.x + 1)] == '.' && p.dir == RIGHT)
+        if (m.a[(p.y)][(p.x + 1)] == '.' && p.dirPacman == RIGHT)
         {
             m.a[(p.y)][(p.x + 1)] = ' ';
-            score += 10; //this is the property of game so it remembers the updated value
+            score += 10; // this is the property of game so it remembers the updated value
             // p.x--;
         }
-        else if (m.a[(p.y)][(p.x - 1)] == '.' && p.dir == LEFT)
+        else if (m.a[(p.y)][(p.x - 1)] == '.' && p.dirPacman == LEFT)
         {
             m.a[(p.y)][(p.x - 1)] = ' ';
             score += 10;
 
             // p.x++;
         }
-        else if (m.a[(p.y - 1)][(p.x)] == '.' && p.dir == UP)
+        else if (m.a[(p.y - 1)][(p.x)] == '.' && p.dirPacman == UP)
         {
             m.a[(p.y - 1)][(p.x)] = ' ';
             score += 10;
             // p.y++;
         }
-        else if (m.a[(p.y + 1)][(p.x)] == '.' && p.dir == DOWN)
+        else if (m.a[(p.y + 1)][(p.x)] == '.' && p.dirPacman == DOWN)
         {
             m.a[(p.y + 1)][(p.x)] = ' ';
             score += 10;
@@ -190,17 +276,52 @@ public:
         }
     }
 
-    void logic(Map &m, Pacman &p)
+    void Ghostcollision(Pacman &P, Ghost &gh)
+    {
+        if (P.x == gh.x && P.y == gh.y)
+        {
+
+            gameOver = true;
+            P.pac = ' ';
+        }
+    }
+
+    vector<Direction> possibleDirection(Map m, Pacman gh)
+    {
+        vector<Direction> temp; // vector of enum datatype
+
+        if (m.a[gh.y][gh.x + 1] != '#') // right case
+        {
+            temp.push_back(RIGHT);
+        }
+        if (m.a[gh.y][gh.x - 1] != '#') // LEFT case
+        {
+            temp.push_back(LEFT);
+        }
+        if (m.a[gh.y - 1][gh.x] != '#') // UP case
+        {
+            temp.push_back(UP);
+        }
+        if (m.a[gh.y + 1][gh.x] != '#') // DOWN case
+        {
+            temp.push_back(DOWN);
+        }
+
+        return temp;
+    }
+
+    void logic(Map &m, Pacman &p, Ghost &gh)
     { // pass by reference as it's not the property of the object as without reference it sends a copy of the object and doesnt remember
-        wallCollision(m, p);
+        wallCollision(m, p, gh);
         fruitCollision(m, p);
     }
 };
 
-class Stats {
-    public:
-
-    void showStats(Game g){
+class Stats
+{
+public:
+    void showStats(Game &g) // if we don't put reference then a copy is created and hence destructor will be called twice
+    {
         cout << "Score: " << g.score << endl;
     }
 };
@@ -210,19 +331,21 @@ int main()
     Game g;
     Map m;
     Pacman P;
+    Ghost gh;
     Stats s;
     P.x = 10;
     P.y = 10;
 
+    gh.x = 5;
+    gh.y = 5;
+
     g.hideCursor();
-    m.inialiseMap("map1.txt");
+    m.inialiseMap("map2.txt"); // fetchs it
     while (!g.gameOver)
-    { 
+    {
         g.clearScreen();
-        m.displayMap(P);
-        s.showStats(g);
-        
-        if (P.dir == UP || P.dir == DOWN)
+
+        if ((P.dirPacman == UP && gh.dirGhost == UP) || (P.dirPacman == DOWN && gh.dirGhost == UP))
         {
             Sleep(150); // increasing the delay (inbuilt from library)
         }
@@ -231,8 +354,34 @@ int main()
             Sleep(60); // delay for 40ms  (inbuilt from library)
         }
         P.PacInput();
-        g.logic(m, P);
+        gh.setGhostDirection();
+        g.logic(m, P, gh);
         P.Pacmove();
+        g.Ghostcollision(P, gh);
+        gh.Ghostmove();
+        m.displayMap(P, gh);
+        s.showStats(g);
+        // vector<Direction> dir = g.possibleDirection(m, P);
+        // for (int i = 0; i < dir.size(); i++)
+        // {
+        //     cout << dir.size() << " ";
+        //     switch (dir[i])
+        //     {
+        //     case UP:
+        //         cout << "UP ";
+        //         break;
+        //     case DOWN:
+        //         cout << "DOWN ";
+        //         break;
+        //     case RIGHT:
+        //         cout << "RIGHT ";
+        //         break;
+        //     case LEFT:
+        //         cout << "LEFT ";
+        //         break;
+        //     }
+        // }
+        // dir.clear();
     }
     return 0;
 }
