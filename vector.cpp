@@ -10,8 +10,15 @@ using namespace std;
 
 // ANSI escape codes for text colors
 #define RED     "\x1b[31m"
+#define BRIGHT_RED     "\x1b[91m"
 #define YELLOW  "\x1b[33m"
 #define RESET   "\x1b[0m"
+#define BLUE    "\x1b[34m"
+#define MAGENTA "\x1b[35m"
+#define CYAN     "\x1b[36m"
+#define GREEN    "\x1b[32m"
+#define ORANGE   "\x1b[38;2;255;165;0m"
+
 
 enum Direction
 {
@@ -230,12 +237,12 @@ public:
                 }
                 else if (i == gh.y && j == gh.x)
                 {
-                    cout <<RED << gh.ghost<< RESET;
+                    cout <<BRIGHT_RED << gh.ghost<< RESET;
                 }
 
                 else
                 {
-                    cout << a[i][j];
+                    cout <<BLUE << a[i][j]<<RESET;
                 }
             }
             cout << "\n";
@@ -260,13 +267,13 @@ public:
     {
         if (isWon == true)
         {
-            cout << "You Won :-) :-) \n";
+            cout << GREEN<<"You Won"<<CYAN<<" :-) :-) \n"<<RESET;
         }
         else
         {
-            cout << "You Loose :-(  :-( \n";
+            cout<< RED << "You Loose"<<CYAN<<" :-( :-( \n"<<RESET;
         }
-        cout << "Game Over\n";
+        cout <<ORANGE<< "Game Over\n"<<RESET;
     }
 
     void hideCursor() // to prevent the cursor from glitching
@@ -418,7 +425,7 @@ class Stats
 public:
     void showStats(Game &g) // if we don't put reference then a copy is created and hence destructor will be called twice
     {
-        cout << "Score: " << g.score << endl;
+        cout <<MAGENTA << "Score: " <<CYAN <<g.score <<RESET<< endl;
     }
 };
 
@@ -441,7 +448,7 @@ int main()
     gh.y = 5;
 
     g.hideCursor();
-    m.inialiseMap("map.txt"); // fetchs it
+    m.inialiseMap("map3.txt"); // fetchs it
     while (!g.gameOver)
     {
         countTime++;
