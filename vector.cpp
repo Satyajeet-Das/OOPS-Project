@@ -33,23 +33,40 @@ public:
 
     void PacInput()
     {
-        if (_kbhit())
-        {   
-            switch (_getch())
-            {
-            case 'w':
+        // if (_kbhit())
+        // {   
+        //     switch (_getch())
+        //     {
+        //     case 'w':
+        //         dirPacman = UP;
+        //         break;
+        //     case 'a':
+        //         dirPacman = LEFT;
+        //         break;
+        //     case 's':
+        //         dirPacman = DOWN;
+        //         break;
+        //     case 'd':
+        //         dirPacman = RIGHT;
+        //         break;
+        //     }
+        // }
+
+        if (GetAsyncKeyState(VK_UP) & 0x8000) {
                 dirPacman = UP;
-                break;
-            case 'a':
-                dirPacman = LEFT;
-                break;
-            case 's':
+            // std::cout << "Up arrow pressed\n";
+        }
+        if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
                 dirPacman = DOWN;
-                break;
-            case 'd':
-                dirPacman = RIGHT;
-                break;
-            }
+            // std::cout << "Down arrow pressed\n";
+        }
+        if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
+                dirPacman = LEFT;
+            // std::cout << "Left arrow pressed\n";
+        }
+        if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
+            dirPacman = RIGHT;
+            // std::cout << "Right arrow pressed\n";
         }
     }
     void Pacmove()
