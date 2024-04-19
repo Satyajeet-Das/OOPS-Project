@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -73,7 +72,7 @@ public:
     int x, y;
     Direction dirGhost;
 
-    void setGhostDirection()
+    void setGhostDirectionscatter()
     {
         srand(time(0));
 
@@ -116,6 +115,54 @@ public:
             break;
         }
     }
+    inline int distance(Pacman &P, int x2, int y2)
+    {
+        return (P.x - x2) * (P.x - x2) + (P.y - y2) * (P.y - y2);
+    }
+    void chase(Pacman &P, vector<Direction> &dir)
+    {
+        int minDistance = INT_MAX;
+
+        Direction finalDir;
+
+        for (int i = 0; i < dir.size(); i++)
+        {
+            // cout <<distance(P,x,y)<<"\n";
+            if (dir[i] == UP)
+            {
+                if (minDistance > distance(P, x, y - 1))
+                {
+                    minDistance = distance(P, x, y - 1);
+                    finalDir = UP;
+                }
+            }
+            else if (dir[i] == DOWN)
+            {
+                if (minDistance > distance(P, x, y + 1))
+                {
+                    minDistance = distance(P, x, y + 1);
+                    finalDir = DOWN;
+                }
+            }
+            else if (dir[i] == LEFT)
+            {
+                if (minDistance > distance(P, x - 1, y))
+                {
+                    minDistance = distance(P, x - 1, y);
+                    finalDir = LEFT;
+                }
+            }
+            else if (dir[i] == RIGHT)
+            {
+                if (minDistance > distance(P, x + 1, y))
+                {
+                    minDistance = distance(P, x + 1, y);
+                    finalDir = RIGHT;
+                }
+            }
+        }
+        dirGhost = finalDir;
+    }
 };
 
 class Map
@@ -124,6 +171,7 @@ public:
     vector<vector<char>> a; // this is 2-d vector for the map
     int height;
     int width;
+    int noFruits;
 
     void inialiseMap(string filename)
     {
@@ -136,6 +184,10 @@ public:
             for (char c : line) // like foreach
             {
                 templine.push_back(c);
+                if (c == '.')
+                {
+                    noFruits++;
+                }
             }
             a.push_back(templine);
         }
@@ -184,7 +236,7 @@ public:
         cout << "Game Over\n";
     }
 
-    void hideCursor()
+    void hideCursor() // to prevent the cursor from glitching
     {
         HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
         CONSOLE_CURSOR_INFO cursorInfo;
@@ -255,24 +307,27 @@ public:
             m.a[(p.y)][(p.x + 1)] = ' ';
             score += 10; // this is the property of game so it remembers the updated value
             // p.x--;
+            m.noFruits--;
         }
         else if (m.a[(p.y)][(p.x - 1)] == '.' && p.dirPacman == LEFT)
         {
             m.a[(p.y)][(p.x - 1)] = ' ';
             score += 10;
-
+            m.noFruits--;
             // p.x++;
         }
         else if (m.a[(p.y - 1)][(p.x)] == '.' && p.dirPacman == UP)
         {
             m.a[(p.y - 1)][(p.x)] = ' ';
             score += 10;
+            m.noFruits--;
             // p.y++;
         }
         else if (m.a[(p.y + 1)][(p.x)] == '.' && p.dirPacman == DOWN)
         {
             m.a[(p.y + 1)][(p.x)] = ' ';
             score += 10;
+            m.noFruits--;
             // p.y--;
         }
     }
@@ -282,12 +337,20 @@ public:
         if (P.x == gh.x && P.y == gh.y)
         {
 
+            cout << "You Loose :-(  :-( \n";
             gameOver = true;
             P.pac = ' ';
         }
     }
-
-    vector<Direction> possibleDirection(Map m, Pacman gh)
+    void fruitfinish(Map &m)
+    {
+        if (m.noFruits == 0)
+        {
+            cout << "You Won :-) :-) \n";
+            gameOver = true;
+        }
+    }
+    vector<Direction> possibleDirection(Map m, Ghost gh)
     {
         vector<Direction> temp; // vector of enum datatype
 
@@ -334,16 +397,18 @@ int main()
     Pacman P;
     Ghost gh;
     Stats s;
-    P.x = 10;
-    P.y = 10;
+    int countTime = 0;
+    P.x = 26;
+    P.y = 5;
 
     gh.x = 5;
     gh.y = 5;
 
     g.hideCursor();
-    m.inialiseMap("map2.txt"); // fetchs it
+    m.inialiseMap("map1.txt"); // fetchs it
     while (!g.gameOver)
     {
+        countTime++;
         g.clearScreen();
 
         if ((P.dirPacman == UP && gh.dirGhost == UP) || (P.dirPacman == DOWN && gh.dirGhost == UP))
@@ -355,17 +420,25 @@ int main()
             Sleep(60); // delay for 40ms  (inbuilt from library)
         }
         P.PacInput();
-        gh.setGhostDirection();
+        if (countTime >= 56)
+        {
+            vector<Direction> dir = g.possibleDirection(m, gh);
+            gh.chase(P, dir);
+        }
+        else
+        {
+            gh.setGhostDirectionscatter();
+        }
         g.logic(m, P, gh);
         P.Pacmove();
         g.Ghostcollision(P, gh);
         gh.Ghostmove();
         m.displayMap(P, gh);
         s.showStats(g);
-        // vector<Direction> dir = g.possibleDirection(m, P);
         // for (int i = 0; i < dir.size(); i++)
         // {
         //     cout << dir.size() << " ";
+
         //     switch (dir[i])
         //     {
         //     case UP:
