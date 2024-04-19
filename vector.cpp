@@ -8,6 +8,11 @@
 #include <ctime>
 using namespace std;
 
+// ANSI escape codes for text colors
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
 enum Direction
 {
     STOP = 0,
@@ -21,6 +26,7 @@ class Pacman
 {
 public:
     char pac = 'O';
+
     int x;
     int y;
     Direction dirPacman;
@@ -171,7 +177,7 @@ public:
     vector<vector<char>> a; // this is 2-d vector for the map
     int height;
     int width;
-    int noFruits;
+    int noFruits=0;
 
     void inialiseMap(string filename)
     {
@@ -224,15 +230,25 @@ class Game
 {
 public:
     bool gameOver;
+    bool isWon;
     int score;
     Game()
     {
         gameOver = false;
+        isWon = false;
         score = 0;
     }
 
     ~Game()
     {
+        if (isWon == true)
+        {
+            cout << "You Won :-) :-) \n";
+        }
+        else
+        {
+            cout << "You Loose :-(  :-( \n";
+        }
         cout << "Game Over\n";
     }
 
@@ -337,7 +353,6 @@ public:
         if (P.x == gh.x && P.y == gh.y)
         {
 
-            cout << "You Loose :-(  :-( \n";
             gameOver = true;
             P.pac = ' ';
         }
@@ -346,8 +361,8 @@ public:
     {
         if (m.noFruits == 0)
         {
-            cout << "You Won :-) :-) \n";
             gameOver = true;
+            isWon = true;
         }
     }
     vector<Direction> possibleDirection(Map m, Ghost gh)
@@ -397,6 +412,10 @@ int main()
     Pacman P;
     Ghost gh;
     Stats s;
+    // char ghost[3]={
+
+    // };
+    
     int countTime = 0;
     P.x = 26;
     P.y = 5;
@@ -405,7 +424,7 @@ int main()
     gh.y = 5;
 
     g.hideCursor();
-    m.inialiseMap("map1.txt"); // fetchs it
+    m.inialiseMap("map.txt"); // fetchs it
     while (!g.gameOver)
     {
         countTime++;
@@ -432,6 +451,7 @@ int main()
         g.logic(m, P, gh);
         P.Pacmove();
         g.Ghostcollision(P, gh);
+        g.fruitfinish(m);
         gh.Ghostmove();
         m.displayMap(P, gh);
         s.showStats(g);
@@ -456,6 +476,7 @@ int main()
         //     }
         // }
         // dir.clear();
+        // cout<<m.noFruits<<"\n";
     }
     return 0;
 }
