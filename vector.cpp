@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -23,7 +24,7 @@ public:
     int x;
     int y;
     Directionpacman dir;
-    
+
     void PacInput()
     {
         if (_kbhit())
@@ -51,7 +52,6 @@ public:
         {
         case UP:
             y--;
-            cout << "the ycord" << y << "\n";
             break;
         case DOWN:
             y++;
@@ -99,7 +99,7 @@ public:
             {
                 if (i == P.y && j == P.x) // i represents the y and j represents the x
                 {
-                    cout << "P";
+                    cout << "O";
                 }
                 else
                 {
@@ -117,9 +117,18 @@ public:
     int score;
     Game()
     {
-        gameOver = false;
+       gameOver = false;
         score = 0;
     }
+
+    void hideCursor() {
+        HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_CURSOR_INFO cursorInfo;
+        GetConsoleCursorInfo(consoleHandle, &cursorInfo);
+        cursorInfo.bVisible = FALSE; // Set cursor visibility to false
+        SetConsoleCursorInfo(consoleHandle, &cursorInfo);
+    }
+
     void clearScreen()
     {
         COORD cursorPosition;
@@ -130,33 +139,97 @@ public:
 
     void wallCollision(Map &m, Pacman &p)
     {
-      
-       
-        
+
+        if (m.a[(p.y)][(p.x + 1)] == '#' && p.dir == RIGHT)
+        {
+            p.dir = STOP;
+            // p.x--;
+        }
+        else if (m.a[(p.y)][(p.x - 1)] == '#' && p.dir == LEFT)
+        {
+            p.dir = STOP;
+            // p.x++;
+        }
+        else if (m.a[(p.y - 1)][(p.x)] == '#' && p.dir == UP)
+        {
+            p.dir = STOP;
+            // p.y++;
+        }
+        else if (m.a[(p.y + 1)][(p.x)] == '#' && p.dir == DOWN)
+        {
+            p.dir = STOP;
+            // p.y--;
+        }
+    }
+    void fruitCollision(Map &m, Pacman &p)
+    {
+
+        if (m.a[(p.y)][(p.x + 1)] == '.' && p.dir == RIGHT)
+        {
+            m.a[(p.y)][(p.x + 1)] = ' ';
+            score += 10; //this is the property of game so it remembers the updated value
+            // p.x--;
+        }
+        else if (m.a[(p.y)][(p.x - 1)] == '.' && p.dir == LEFT)
+        {
+            m.a[(p.y)][(p.x - 1)] = ' ';
+            score += 10;
+
+            // p.x++;
+        }
+        else if (m.a[(p.y - 1)][(p.x)] == '.' && p.dir == UP)
+        {
+            m.a[(p.y - 1)][(p.x)] = ' ';
+            score += 10;
+            // p.y++;
+        }
+        else if (m.a[(p.y + 1)][(p.x)] == '.' && p.dir == DOWN)
+        {
+            m.a[(p.y + 1)][(p.x)] = ' ';
+            score += 10;
+            // p.y--;
+        }
     }
 
-    void logic(Map& m, Pacman& p){
+    void logic(Map &m, Pacman &p)
+    { // pass by reference as it's not the property of the object as without reference it sends a copy of the object and doesnt remember
         wallCollision(m, p);
+        fruitCollision(m, p);
     }
 };
+
+class Stats {
+    public:
+
+    void showStats(Game g){
+        cout << "Score: " << g.score << endl;
+    }
+};
+
 int main()
 {
     Game g;
     Map m;
     Pacman P;
+    Stats s;
     P.x = 10;
     P.y = 10;
 
-    m.inialiseMap("map.txt");
+    g.hideCursor();
+    m.inialiseMap("map1.txt");
     while (!g.gameOver)
-    {
+    { 
         g.clearScreen();
         m.displayMap(P);
-        if (P.dir == UP || DOWN)
+        s.showStats(g);
+        
+        if (P.dir == UP || P.dir == DOWN)
         {
-            Sleep(100); // increasing the delay (inbuilt from library)
-        }else{
-            Sleep(50); // delay for 40ms  (inbuilt from library)
+            Sleep(150); // increasing the delay (inbuilt from library)
+        }
+        else
+        {
+            Sleep(60); // delay for 40ms  (inbuilt from library)
         }
         P.PacInput();
         g.logic(m, P);
