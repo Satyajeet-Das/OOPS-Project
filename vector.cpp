@@ -9,9 +9,9 @@
 using namespace std;
 
 // ANSI escape codes for text colors
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_YELLOW  "\x1b[33m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
+#define RED     "\x1b[31m"
+#define YELLOW  "\x1b[33m"
+#define RESET   "\x1b[0m"
 
 enum Direction
 {
@@ -34,7 +34,7 @@ public:
     void PacInput()
     {
         if (_kbhit())
-        {
+        {   
             switch (_getch())
             {
             case 'w':
@@ -209,11 +209,11 @@ public:
             {
                 if (i == P.y && j == P.x) // i represents the y and j represents the x
                 {
-                    cout << P.pac;
+                    cout <<YELLOW << P.pac <<RESET;
                 }
                 else if (i == gh.y && j == gh.x)
                 {
-                    cout << gh.ghost;
+                    cout <<RED << gh.ghost<< RESET;
                 }
 
                 else
