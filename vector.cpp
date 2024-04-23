@@ -9,16 +9,15 @@
 using namespace std;
 
 // ANSI escape codes for text colors
-#define RED     "\x1b[31m"
-#define BRIGHT_RED     "\x1b[91m"
-#define YELLOW  "\x1b[33m"
-#define RESET   "\x1b[0m"
-#define BLUE    "\x1b[34m"
+#define RED "\x1b[31m"
+#define BRIGHT_RED "\x1b[91m"
+#define YELLOW "\x1b[33m"
+#define RESET "\x1b[0m"
+#define BLUE "\x1b[34m"
 #define MAGENTA "\x1b[35m"
-#define CYAN     "\x1b[36m"
-#define GREEN    "\x1b[32m"
-#define ORANGE   "\x1b[38;2;255;165;0m"
-
+#define CYAN "\x1b[36m"
+#define GREEN "\x1b[32m"
+#define ORANGE "\x1b[38;2;255;165;0m"
 
 enum Direction
 {
@@ -41,7 +40,7 @@ public:
     void PacInput()
     {
         // if (_kbhit())
-        // {   
+        // {
         //     switch (_getch())
         //     {
         //     case 'w':
@@ -59,19 +58,23 @@ public:
         //     }
         // }
 
-        if (GetAsyncKeyState(VK_UP) & 0x8000) {
-                dirPacman = UP;
+        if (GetAsyncKeyState(VK_UP) & 0x8000)
+        {
+            dirPacman = UP;
             // std::cout << "Up arrow pressed\n";
         }
-        if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
-                dirPacman = DOWN;
+        if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+        {
+            dirPacman = DOWN;
             // std::cout << "Down arrow pressed\n";
         }
-        if (GetAsyncKeyState(VK_LEFT) & 0x8000) {
-                dirPacman = LEFT;
+        if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+        {
+            dirPacman = LEFT;
             // std::cout << "Left arrow pressed\n";
         }
-        if (GetAsyncKeyState(VK_RIGHT) & 0x8000) {
+        if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+        {
             dirPacman = RIGHT;
             // std::cout << "Right arrow pressed\n";
         }
@@ -100,9 +103,11 @@ class Ghost
 public:
     char ghost = '@';
     int x, y;
+    bool isKillable = false;
+    bool isTrapped = false;
     Direction dirGhost;
 
-    void setGhostDirectionscatter()
+    void setGhostDirectionFrightened()
     {
         srand(time(0));
 
@@ -145,7 +150,7 @@ public:
             break;
         }
     }
-    inline int distance(int x1 , int y1 , int x2, int y2)
+    inline int distance(int x1, int y1, int x2, int y2)
     {
         return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
     }
@@ -162,13 +167,13 @@ public:
             {
                 if (minDistance > distance(P.x, P.y, x, y - 1))
                 {
-                    minDistance = distance(P.x, P.y , x, y - 1);
+                    minDistance = distance(P.x, P.y, x, y - 1);
                     finalDir = UP;
                 }
             }
             else if (dir[i] == DOWN && dirGhost != UP)
             {
-                if (minDistance > distance(P.x, P.y , x, y + 1))
+                if (minDistance > distance(P.x, P.y, x, y + 1))
                 {
                     minDistance = distance(P.x, P.y, x, y + 1);
                     finalDir = DOWN;
@@ -176,15 +181,15 @@ public:
             }
             else if (dir[i] == LEFT && dirGhost != RIGHT)
             {
-                if (minDistance > distance(P.x, P.y , x - 1, y))
+                if (minDistance > distance(P.x, P.y, x - 1, y))
                 {
-                    minDistance = distance(P.x, P.y , x - 1, y);
+                    minDistance = distance(P.x, P.y, x - 1, y);
                     finalDir = LEFT;
                 }
             }
             else if (dir[i] == RIGHT && dirGhost != LEFT)
             {
-                if (minDistance > distance(P.x, P.y , x + 1, y))
+                if (minDistance > distance(P.x, P.y, x + 1, y))
                 {
                     minDistance = distance(P.x, P.y, x + 1, y);
                     finalDir = RIGHT;
@@ -195,18 +200,13 @@ public:
     }
 };
 
-class YellowGhost: public Ghost {
-    public:
-
-};
-
 class Map
 {
 public:
     vector<vector<char>> a; // this is 2-d vector for the map
     int height;
     int width;
-    int noFruits=0;
+    int noFruits = 0;
 
     void inialiseMap(string filename)
     {
@@ -230,7 +230,7 @@ public:
         width = a[0].size(); // initialize the heigth and width
     }
 
-    void displayMap(Pacman P, Ghost gh)
+    void displayMap(Pacman P, Ghost ghy, Ghost ghr)
     {
         for (int i = 0; i < a.size(); i++)
         {
@@ -238,20 +238,253 @@ public:
             {
                 if (i == P.y && j == P.x) // i represents the y and j represents the x
                 {
-                    cout <<YELLOW << P.pac <<RESET;
+                    cout << YELLOW << P.pac << RESET;
                 }
-                else if (i == gh.y && j == gh.x)
+
+                else if (i == ghy.y && j == ghy.x)
                 {
-                    cout <<BRIGHT_RED << gh.ghost<< RESET;
+                    if (ghy.isKillable)
+                    {
+                        
+                        cout << MAGENTA << ghy.ghost << RESET;
+                    }
+                    else
+                    {
+                        cout << GREEN << ghy.ghost << RESET;
+                    }
+                }
+                else if (i == ghr.y && j == ghr.x)
+                {
+                    if (ghy.isKillable)
+                    {
+                        
+                        cout << MAGENTA << ghy.ghost << RESET;
+                    }
+                    else
+                    {
+                        cout << BRIGHT_RED << ghy.ghost << RESET;
+                    }
                 }
 
                 else
                 {
-                    cout <<BLUE << a[i][j]<<RESET;
+                    cout << BLUE << a[i][j] << RESET;
                 }
             }
             cout << "\n";
         }
+    }
+};
+
+class YellowGhost : public Ghost
+{
+public:
+    YellowGhost(int a, int b)
+    {
+        x = a;
+        y = b;
+    }
+    void chase(Pacman &P, vector<Direction> &dir)
+    {
+        int minDistance = INT_MAX;
+
+        Direction finalDir;
+
+        for (int i = 0; i < dir.size(); i++)
+        {
+            //  cout << P.x << " " << P.y << endl;
+            // cout <<distance(P,x,y)<<"\n";
+            if (dir[i] == UP && dirGhost != DOWN) // because ghost cannot turn 180 degrees
+            {
+                // cout << distance(P.x, P.y-4, x + 1, y)<< endl;
+                if (minDistance > distance(P.x, P.y, x, y - 1))
+                {
+                    minDistance = distance(P.x, P.y, x, y - 1);
+                    finalDir = UP;
+                }
+            }
+            else if (dir[i] == DOWN && dirGhost != UP)
+            {
+                // cout << distance(P.x, (P.y)+4, x + 1, y)<< endl;
+                if (minDistance > distance(P.x, (P.y), x, y + 1)) // check why +4 doesnot work
+                {
+                    minDistance = distance(P.x, (P.y), x, y + 1);
+                    finalDir = DOWN;
+                }
+            }
+            else if (dir[i] == LEFT && dirGhost != RIGHT)
+            {
+                // cout << distance(P.x - 4, P.y, x + 1, y)<< endl;
+                if (minDistance > distance(P.x, P.y, x - 1, y))
+                {
+                    minDistance = distance(P.x, P.y, x - 1, y);
+                    finalDir = LEFT;
+                }
+            }
+            else if (dir[i] == RIGHT && dirGhost != LEFT)
+            {
+                // cout << distance(P.x + 4, P.y, x + 1, y)<< endl;
+                if (minDistance > distance(P.x, P.y, x + 1, y))
+                {
+                    minDistance = distance(P.x, P.y, x + 1, y);
+                    finalDir = RIGHT;
+                }
+            }
+        }
+        dirGhost = finalDir;
+    }
+
+    void setGhostDirectionscatter(Map m, vector<Direction> &dir)
+    {
+        int minDistance = INT_MAX;
+
+        Direction finalDir;
+
+        for (int i = 0; i < dir.size(); i++)
+        {
+            // cout <<distance(P,x,y)<<"\n";
+            int cornerX = 1;
+            int cornerY = m.height - 1;
+            if (dir[i] == UP && dirGhost != DOWN) // because ghost cannot turn 180 degrees
+            {
+                if (minDistance > distance(cornerX, cornerY, x, y - 1))
+                {
+                    minDistance = distance(cornerX, cornerY, x, y - 1);
+                    finalDir = UP;
+                }
+            }
+            else if (dir[i] == DOWN && dirGhost != UP)
+            {
+                if (minDistance > distance(cornerX, cornerY, x, y + 1))
+                {
+                    minDistance = distance(cornerX, cornerY, x, y + 1);
+                    finalDir = DOWN;
+                }
+            }
+            else if (dir[i] == LEFT && dirGhost != RIGHT)
+            {
+                if (minDistance > distance(cornerX, cornerY, x - 1, y))
+                {
+                    minDistance = distance(cornerX, cornerY, x - 1, y);
+                    finalDir = LEFT;
+                }
+            }
+            else if (dir[i] == RIGHT && dirGhost != LEFT)
+            {
+                if (minDistance > distance(cornerX, cornerY, x + 1, y))
+                {
+                    minDistance = distance(cornerX, cornerY, x + 1, y);
+                    finalDir = RIGHT;
+                }
+            }
+        }
+        dirGhost = finalDir;
+    }
+};
+
+class RedGhost : public Ghost
+{
+public:
+    RedGhost(int a, int b)
+    {
+        x = a;
+        y = b;
+    }
+    void chase(Pacman &P, vector<Direction> &dir)
+    {
+        int minDistance = INT_MAX;
+
+        Direction finalDir;
+
+        for (int i = 0; i < dir.size(); i++)
+        {
+            // {    cout << P.x << " " << P.y << endl;
+            // cout <<distance(P,x,y)<<"\n";
+            if (dir[i] == UP && dirGhost != DOWN) // because ghost cannot turn 180 degrees
+            {
+                // cout << distance(P.x, P.y-4, x + 1, y)<< endl;
+                if (minDistance > distance(P.x, P.y, x, y - 1))
+                {
+                    minDistance = distance(P.x, P.y, x, y - 1);
+                    finalDir = UP;
+                }
+            }
+            else if (dir[i] == DOWN && dirGhost != UP)
+            {
+                // cout << distance(P.x, (P.y)+4, x + 1, y)<< endl;
+                if (minDistance > distance(P.x, (P.y), x, y + 1)) // check why +4 doesnot work
+                {
+                    minDistance = distance(P.x, (P.y), x, y + 1);
+                    finalDir = DOWN;
+                }
+            }
+            else if (dir[i] == LEFT && dirGhost != RIGHT)
+            {
+                // cout << distance(P.x - 4, P.y, x + 1, y)<< endl;
+                if (minDistance > distance(P.x, P.y, x - 1, y))
+                {
+                    minDistance = distance(P.x, P.y, x - 1, y);
+                    finalDir = LEFT;
+                }
+            }
+            else if (dir[i] == RIGHT && dirGhost != LEFT)
+            {
+                // cout << distance(P.x + 4, P.y, x + 1, y)<< endl;
+                if (minDistance > distance(P.x, P.y, x + 1, y))
+                {
+                    minDistance = distance(P.x, P.y, x + 1, y);
+                    finalDir = RIGHT;
+                }
+            }
+        }
+        dirGhost = finalDir;
+    }
+
+    void setGhostDirectionscatter(Map m, vector<Direction> &dir)
+    {
+        int minDistance = INT_MAX;
+
+        Direction finalDir;
+
+        for (int i = 0; i < dir.size(); i++)
+        {
+            // cout <<distance(P,x,y)<<"\n";
+            int cornerX = m.width - 2;
+            int cornerY = m.height - 1;
+            if (dir[i] == UP && dirGhost != DOWN) // because ghost cannot turn 180 degrees
+            {
+                if (minDistance > distance(cornerX, cornerY, x, y - 1))
+                {
+                    minDistance = distance(cornerX, cornerY, x, y - 1);
+                    finalDir = UP;
+                }
+            }
+            else if (dir[i] == DOWN && dirGhost != UP)
+            {
+                if (minDistance > distance(cornerX, cornerY, x, y + 1))
+                {
+                    minDistance = distance(cornerX, cornerY, x, y + 1);
+                    finalDir = DOWN;
+                }
+            }
+            else if (dir[i] == LEFT && dirGhost != RIGHT)
+            {
+                if (minDistance > distance(cornerX, cornerY, x - 1, y))
+                {
+                    minDistance = distance(cornerX, cornerY, x - 1, y);
+                    finalDir = LEFT;
+                }
+            }
+            else if (dir[i] == RIGHT && dirGhost != LEFT)
+            {
+                if (minDistance > distance(cornerX, cornerY, x + 1, y))
+                {
+                    minDistance = distance(cornerX, cornerY, x + 1, y);
+                    finalDir = RIGHT;
+                }
+            }
+        }
+        dirGhost = finalDir;
     }
 };
 
@@ -261,6 +494,8 @@ public:
     bool gameOver;
     bool isWon;
     int score;
+    bool firstFruitTime;
+    bool firstTrappedTime;
     Game()
     {
         gameOver = false;
@@ -272,13 +507,16 @@ public:
     {
         if (isWon == true)
         {
-            cout << GREEN<<"You Won"<<CYAN<<" :-) :-) \n"<<RESET;
+            cout << GREEN << "You Won" << CYAN << " :-) :-) \n"
+                 << RESET;
         }
         else
         {
-            cout<< RED << "You Loose"<<CYAN<<" :-( :-( \n"<<RESET;
+            cout << RED << "You Loose" << CYAN << " :-( :-( \n"
+                 << RESET;
         }
-        cout <<ORANGE<< "Game Over\n"<<RESET;
+        cout << ORANGE << "Game Over\n"
+             << RESET;
     }
 
     void hideCursor() // to prevent the cursor from glitching
@@ -376,14 +614,59 @@ public:
             // p.y--;
         }
     }
-
-    void Ghostcollision(Pacman &P, Ghost &gh)
+    void starFruitCollision(Map &m, Pacman &p, Ghost &ghy, Ghost &ghr)
     {
-        if (P.x == gh.x && P.y == gh.y)
+
+        if (m.a[(p.y)][(p.x + 1)] == '*' && p.dirPacman == RIGHT)
+        {
+            m.a[(p.y)][(p.x + 1)] = ' ';
+            ghy.isKillable = true;
+            ghr.isKillable = true;
+            firstFruitTime = true;
+        }
+        else if (m.a[(p.y)][(p.x - 1)] == '*' && p.dirPacman == LEFT)
+        {
+            m.a[(p.y)][(p.x - 1)] = ' ';
+            ghy.isKillable = true;
+            ghr.isKillable = true; // score += 10;
+            firstFruitTime = true;
+            // m.noFruits--;
+            // p.x++;
+        }
+        else if (m.a[(p.y - 1)][(p.x)] == '*' && p.dirPacman == UP)
+        {
+            m.a[(p.y - 1)][(p.x)] = ' ';
+            ghy.isKillable = true;
+            ghr.isKillable = true; // score += 10;
+            firstFruitTime = true;
+            // m.noFruits--;
+            // p.y++;
+        }
+        else if (m.a[(p.y + 1)][(p.x)] == '*' && p.dirPacman == DOWN)
+        {
+            m.a[(p.y + 1)][(p.x)] = ' ';
+            ghy.isKillable = true;
+            ghr.isKillable = true; // score += 10;
+            firstFruitTime = true;
+            // m.noFruits--;
+            // p.y--;
+        }
+    }
+
+    void Ghostcollision(Pacman &P, Ghost &gh, Map &m)
+    {
+        if (P.x == gh.x && P.y == gh.y && gh.isKillable == false)
         {
 
             gameOver = true;
             P.pac = ' ';
+        }
+        else if (P.x == gh.x && P.y == gh.y && gh.isKillable == true)
+        {
+            gh.x = m.width / 2;
+            gh.y = m.height / 2;
+            gh.isTrapped = true;
+            firstTrappedTime = true;
         }
     }
     void fruitfinish(Map &m)
@@ -430,7 +713,7 @@ class Stats
 public:
     void showStats(Game &g) // if we don't put reference then a copy is created and hence destructor will be called twice
     {
-        cout <<MAGENTA << "Score: " <<CYAN <<g.score <<RESET<< endl;
+        cout << MAGENTA << "Score: " << CYAN << g.score << RESET << endl;
     }
 };
 
@@ -439,27 +722,44 @@ int main()
     Game g;
     Map m;
     Pacman P;
-    Ghost gh;
+    // YellowGhost ghy(5,19);
+    // RedGhost ghr(14,10);
+    // Ghos/t gh;
+    YellowGhost ghy(1, 1);
+    RedGhost ghr(1, 2);
     Stats s;
     // char ghost[3]={
 
     // };
-    
+
     int countTime = 0;
     P.x = 26;
     P.y = 5;
 
-    gh.x = 5;
-    gh.y = 5;
-
+    // ghy.x = 5;
+    // ghy.y = 10;
+    // ghy.x = 5;
+    // ghy.y = 10;
     g.hideCursor();
-    m.inialiseMap("map3.txt"); // fetchs it
+    m.inialiseMap("map4.txt"); // fetchs it
+    int isStartkill = 0;
+    int isStarTrapped = 0;
     while (!g.gameOver)
     {
+        if ((ghy.isKillable == true || ghr.isKillable == true) && g.firstFruitTime == true)
+        {
+            isStartkill = countTime;
+            g.firstFruitTime = false;
+        }
+        if ((ghy.isTrapped == true || ghr.isTrapped == true) && g.firstTrappedTime == true)
+        {
+            isStarTrapped = countTime;
+            g.firstTrappedTime = false;
+        }
         countTime++;
         g.clearScreen();
 
-        if ((P.dirPacman == UP && gh.dirGhost == UP) || (P.dirPacman == DOWN && gh.dirGhost == UP))
+        if ((P.dirPacman == UP && ghy.dirGhost == UP && ghr.dirGhost == UP) || (P.dirPacman == DOWN && ghy.dirGhost == UP && ghr.dirGhost == UP))
         {
             Sleep(150); // increasing the delay (inbuilt from library)
         }
@@ -468,44 +768,62 @@ int main()
             Sleep(60); // delay for 40ms  (inbuilt from library)
         }
         P.PacInput();
+        vector<Direction> diry = g.possibleDirection(m, ghy);
+        vector<Direction> dirr = g.possibleDirection(m, ghr);
         if (countTime >= 56)
         {
-            vector<Direction> dir = g.possibleDirection(m, gh);
-            gh.chase(P, dir);
+            ghy.chase(P, diry);
+            ghr.chase(P, dirr);
         }
         else
         {
-            gh.setGhostDirectionscatter();
+            ghy.setGhostDirectionscatter(m, diry);
+            ghr.setGhostDirectionscatter(m, dirr);
         }
-        g.logic(m, P, gh);
-        P.Pacmove();
-        g.Ghostcollision(P, gh);
-        g.fruitfinish(m);
-        gh.Ghostmove();
-        m.displayMap(P, gh);
-        s.showStats(g);
-        // for (int i = 0; i < dir.size(); i++)
-        // {
-        //     cout << dir.size() << " ";
 
-        //     switch (dir[i])
-        //     {
-        //     case UP:
-        //         cout << "UP ";
-        //         break;
-        //     case DOWN:
-        //         cout << "DOWN ";
-        //         break;
-        //     case RIGHT:
-        //         cout << "RIGHT ";
-        //         break;
-        //     case LEFT:
-        //         cout << "LEFT ";
-        //         break;
-        //     }
-        // }
-        // dir.clear();
-        // cout<<m.noFruits<<"\n";
+        g.logic(m, P, ghr);
+        g.logic(m, P, ghy);
+
+        P.Pacmove();
+
+        g.Ghostcollision(P, ghr, m);
+        g.Ghostcollision(P, ghy, m);
+
+        g.fruitfinish(m);
+
+        g.starFruitCollision(m, P, ghy, ghr);
+        //Time period for which it can kill and after time ends, it resets
+        if (countTime - isStartkill == 56 && (ghy.isKillable == true || ghr.isKillable == true))
+        {
+            ghr.isKillable = false;
+            ghy.isKillable = false;
+            
+        }
+        
+        if (countTime - isStarTrapped == 26 && (ghy.isTrapped == true || ghr.isTrapped == true))
+        {
+            if(ghy.isTrapped == true){
+                ghy.x = m.width / 2;
+                ghy.y = (m.height / 2) - 3;
+                ghy.isTrapped = false;
+            }
+            
+            if(ghr.isTrapped == true){
+                ghr.x = m.width / 2;
+                ghr.y = (m.height / 2) + 4;
+                ghr.isTrapped = false;
+            }
+            
+            
+        }
+
+        ghr.Ghostmove();
+        ghy.Ghostmove();
+
+        m.displayMap(P, ghy, ghr);
+        s.showStats(g);
+
+        cout << countTime << endl;
     }
     return 0;
 }
