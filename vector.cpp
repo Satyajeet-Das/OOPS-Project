@@ -145,9 +145,9 @@ public:
             break;
         }
     }
-    inline int distance(Pacman &P, int x2, int y2)
+    inline int distance(int x1 , int y1 , int x2, int y2)
     {
-        return (P.x - x2) * (P.x - x2) + (P.y - y2) * (P.y - y2);
+        return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
     }
     void chase(Pacman &P, vector<Direction> &dir)
     {
@@ -160,33 +160,33 @@ public:
             // cout <<distance(P,x,y)<<"\n";
             if (dir[i] == UP && dirGhost != DOWN) // because ghost cannot turn 180 degrees
             {
-                if (minDistance > distance(P, x, y - 1))
+                if (minDistance > distance(P.x, P.y, x, y - 1))
                 {
-                    minDistance = distance(P, x, y - 1);
+                    minDistance = distance(P.x, P.y , x, y - 1);
                     finalDir = UP;
                 }
             }
             else if (dir[i] == DOWN && dirGhost != UP)
             {
-                if (minDistance > distance(P, x, y + 1))
+                if (minDistance > distance(P.x, P.y , x, y + 1))
                 {
-                    minDistance = distance(P, x, y + 1);
+                    minDistance = distance(P.x, P.y, x, y + 1);
                     finalDir = DOWN;
                 }
             }
             else if (dir[i] == LEFT && dirGhost != RIGHT)
             {
-                if (minDistance > distance(P, x - 1, y))
+                if (minDistance > distance(P.x, P.y , x - 1, y))
                 {
-                    minDistance = distance(P, x - 1, y);
+                    minDistance = distance(P.x, P.y , x - 1, y);
                     finalDir = LEFT;
                 }
             }
             else if (dir[i] == RIGHT && dirGhost != LEFT)
             {
-                if (minDistance > distance(P, x + 1, y))
+                if (minDistance > distance(P.x, P.y , x + 1, y))
                 {
-                    minDistance = distance(P, x + 1, y);
+                    minDistance = distance(P.x, P.y, x + 1, y);
                     finalDir = RIGHT;
                 }
             }
