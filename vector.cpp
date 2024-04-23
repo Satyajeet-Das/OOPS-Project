@@ -158,7 +158,7 @@ public:
         for (int i = 0; i < dir.size(); i++)
         {
             // cout <<distance(P,x,y)<<"\n";
-            if (dir[i] == UP)
+            if (dir[i] == UP && dirGhost != DOWN) // because ghost cannot turn 180 degrees
             {
                 if (minDistance > distance(P, x, y - 1))
                 {
@@ -166,7 +166,7 @@ public:
                     finalDir = UP;
                 }
             }
-            else if (dir[i] == DOWN)
+            else if (dir[i] == DOWN && dirGhost != UP)
             {
                 if (minDistance > distance(P, x, y + 1))
                 {
@@ -174,7 +174,7 @@ public:
                     finalDir = DOWN;
                 }
             }
-            else if (dir[i] == LEFT)
+            else if (dir[i] == LEFT && dirGhost != RIGHT)
             {
                 if (minDistance > distance(P, x - 1, y))
                 {
@@ -182,7 +182,7 @@ public:
                     finalDir = LEFT;
                 }
             }
-            else if (dir[i] == RIGHT)
+            else if (dir[i] == RIGHT && dirGhost != LEFT)
             {
                 if (minDistance > distance(P, x + 1, y))
                 {
@@ -193,6 +193,11 @@ public:
         }
         dirGhost = finalDir;
     }
+};
+
+class YellowGhost: public Ghost {
+    public:
+
 };
 
 class Map
