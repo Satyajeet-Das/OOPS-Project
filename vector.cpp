@@ -200,65 +200,6 @@ public:
     }
 };
 
-class YellowGhost: public Ghost {
-    public:
- void chase(Pacman &P, vector<Direction> &dir)
-    {
-        
-        int minDistance = INT_MAX;
-
-        Direction finalDir;
-
-        for (int i = 0; i < dir.size(); i++)
-        {
-            // cout <<distance(P,x,y)<<"\n";
-            if (dir[i] == UP && dirGhost != DOWN) // because ghost cannot turn 180 degrees
-            {
-                if (minDistance > distance(P, x, y - 1))
-                {
-                    minDistance = distance(P, x, y - 1);
-                    finalDir = UP;
-                }
-            }
-            else if (dir[i] == DOWN && dirGhost != UP)
-            {
-                if (minDistance > distance(P, x, y + 1))
-                {
-                    minDistance = distance(P, x, y + 1);
-                    finalDir = DOWN;
-                }
-            }
-            else if (dir[i] == LEFT && dirGhost != RIGHT)
-            {
-                if (minDistance > distance(P, x - 1, y))
-                {
-                    minDistance = distance(P, x - 1, y);
-                    finalDir = LEFT;
-                }
-            }
-            else if (dir[i] == RIGHT && dirGhost != LEFT)
-            {
-                if (minDistance > distance(P, x + 1, y))
-                {
-                    minDistance = distance(P, x + 1, y);
-                    finalDir = RIGHT;
-                }
-            }
-        }
-        dirGhost = finalDir;
-    }
-
-};
-class RedGhost: public Ghost{
-    public:
-
-};
-class PinkGhost: public Ghost{
-    public:
-};
-class GreenGhost: public Ghost{
-    public:
-};
 class Map
 {
 public:
