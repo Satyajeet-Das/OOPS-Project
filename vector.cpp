@@ -735,13 +735,10 @@ int main()
     Pacman P;
     // YellowGhost ghy(5,19);
     // RedGhost ghr(14,10);
-    // Ghos/t gh;
+    
     YellowGhost ghy(1, 1);
     RedGhost ghr(1, 2);
     Stats s;
-    // char ghost[3]={
-
-    // };
 
     int countTime = 0;
     P.x = 26;
