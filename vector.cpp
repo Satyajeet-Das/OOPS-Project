@@ -8,7 +8,7 @@
 #include <ctime>
 using namespace std;
 
-// ANSI escape codes for text colors
+// ANSI(American National Standards Institute) escape codes for text colors
 #define RED "\x1b[31m"
 #define BRIGHT_RED "\x1b[91m"
 #define YELLOW "\x1b[33m"
@@ -781,7 +781,7 @@ int main()
         P.PacInput();
         vector<Direction> diry = g.possibleDirection(m, ghy);
         vector<Direction> dirr = g.possibleDirection(m, ghr);
-        if (countTime >= 56)
+        if (countTime >= 100)
         {
             ghy.chase(P, diry);
             ghr.chase(P, dirr);
@@ -815,14 +815,14 @@ int main()
             if (ghy.isTrapped == true)
             {
                 ghy.x = m.width / 2;
-                ghy.y = (m.height / 2) - 3;
+                ghy.y = (m.height / 2) - 3; //goes up
                 ghy.isTrapped = false;
             }
 
             if (ghr.isTrapped == true)
             {
                 ghr.x = m.width / 2;
-                ghr.y = (m.height / 2) + 4;
+                ghr.y = (m.height / 2) + 4; //goes down
                 ghr.isTrapped = false;
             }
         }
