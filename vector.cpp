@@ -245,7 +245,7 @@ public:
                 {
                     if (ghy.isKillable)
                     {
-                        
+
                         cout << MAGENTA << ghy.ghost << RESET;
                     }
                     else
@@ -257,7 +257,7 @@ public:
                 {
                     if (ghy.isKillable)
                     {
-                        
+
                         cout << MAGENTA << ghy.ghost << RESET;
                     }
                     else
@@ -268,12 +268,17 @@ public:
 
                 else
                 {
-                    if(a[i][j]=='.')
+                    if (a[i][j] == '.')
                     {
-                    cout <<  a[i][j];
-                        
-                    }else{
-                    cout << BLUE << a[i][j] << RESET;
+                        cout << a[i][j];
+                    }
+                    else if (a[i][j] == '*')
+                    {
+                        cout << ORANGE << a[i][j] << RESET;
+                    }
+                    else
+                    {
+                        cout << BLUE << a[i][j] << RESET;
                     }
                 }
             }
@@ -798,29 +803,28 @@ int main()
         g.fruitfinish(m);
 
         g.starFruitCollision(m, P, ghy, ghr);
-        //Time period for which it can kill and after time ends, it resets
+        // Time period for which it can kill and after time ends, it resets
         if (countTime - isStartkill == 56 && (ghy.isKillable == true || ghr.isKillable == true))
         {
             ghr.isKillable = false;
             ghy.isKillable = false;
-            
         }
-        
+
         if (countTime - isStarTrapped == 26 && (ghy.isTrapped == true || ghr.isTrapped == true))
         {
-            if(ghy.isTrapped == true){
+            if (ghy.isTrapped == true)
+            {
                 ghy.x = m.width / 2;
                 ghy.y = (m.height / 2) - 3;
                 ghy.isTrapped = false;
             }
-            
-            if(ghr.isTrapped == true){
+
+            if (ghr.isTrapped == true)
+            {
                 ghr.x = m.width / 2;
                 ghr.y = (m.height / 2) + 4;
                 ghr.isTrapped = false;
             }
-            
-            
         }
 
         ghr.Ghostmove();
@@ -829,7 +833,7 @@ int main()
         m.displayMap(P, ghy, ghr);
         s.showStats(g);
 
-        cout << countTime << endl;
+        // cout << countTime << endl;
     }
     return 0;
 }
