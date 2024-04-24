@@ -268,7 +268,13 @@ public:
 
                 else
                 {
+                    if(a[i][j]=='.')
+                    {
+                    cout <<  a[i][j];
+                        
+                    }else{
                     cout << BLUE << a[i][j] << RESET;
+                    }
                 }
             }
             cout << "\n";
