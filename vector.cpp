@@ -727,110 +727,200 @@ public:
         cout << MAGENTA << "Score: " << CYAN << g.score << RESET << endl;
     }
 };
+class mainMenu
+{
+public:
+    void homepg(string n)
+    {
+        system("cls");
+        cout << BRIGHT_RED << "\nHello " << YELLOW << n << RESET << RED << " welcome to our pacman game :-) !!!\n"
+             << RESET;
+        cout << "Enter y/n/h \n";
+    }
+    void highScoreAdding(string n, int score)
+    {
 
+        ofstream highscores("highscore.txt", ios::app); // opens the file in the output in the append mode
+        if (!highscores.is_open())
+        {
+            cerr << "Error opening file" << endl;
+            exit(1);
+        }
+        highscores << n << " " << score << "\n"
+                   << "\n";
+
+        highscores.close();
+    }
+    void highscoreDisplay(string n)
+    {
+        ifstream high("highscore.txt");
+        string line;
+        while (getline(high, line))
+        {
+            string tempname = "";
+            string score = "";
+            for (char c : line)
+            {
+                if (c != ' ')
+                {
+                    tempname += c;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            if (tempname == n)
+            {
+                cout << "Your scores are:\n";
+                cout << line << "\n";
+            }
+        }
+    }
+};
 int main()
 {
-    Game g;
-    Map m;
-    Pacman P;
-    // YellowGhost ghy(5,19);
-    // RedGhost ghr(14,10);
-    
-    YellowGhost ghy(1, 1);
-    RedGhost ghr(1, 2);
-    Stats s;
+    mainMenu main;
+    char ch;
+    string name;
+    cout << "Enter your name\n";
+    cin >> name;
+    main.homepg(name);
 
-    int countTime = 0;
-    P.x = 26;
-    P.y = 5;
-
-    // ghy.x = 5;
-    // ghy.y = 10;
-    // ghy.x = 5;
-    // ghy.y = 10;
-    g.hideCursor();
-    m.inialiseMap("map4.txt"); // fetchs it
-    int isStartkill = 0;
-    int isStarTrapped = 0;
-    while (!g.gameOver)
+    while (1)
     {
-        if ((ghy.isKillable == true || ghr.isKillable == true) && g.firstFruitTime == true)
-        {
-            isStartkill = countTime;
-            g.firstFruitTime = false;
-        }
-        if ((ghy.isTrapped == true || ghr.isTrapped == true) && g.firstTrappedTime == true)
-        {
-            isStarTrapped = countTime;
-            g.firstTrappedTime = false;
-        }
-        countTime++;
-        g.clearScreen();
 
-        if ((P.dirPacman == UP && ghy.dirGhost == UP && ghr.dirGhost == UP) || (P.dirPacman == DOWN && ghy.dirGhost == UP && ghr.dirGhost == UP))
+        cin >> ch;
+        if (ch == 'y')
         {
-            Sleep(150); // increasing the delay (inbuilt from library)
-        }
-        else
-        {
-            Sleep(60); // delay for 40ms  (inbuilt from library)
-        }
-        P.PacInput();
-        vector<Direction> diry = g.possibleDirection(m, ghy);
-        vector<Direction> dirr = g.possibleDirection(m, ghr);
-        if (countTime >= 100)
-        {
-            ghy.chase(P, diry);
-            ghr.chase(P, dirr);
-        }
-        else
-        {
-            ghy.setGhostDirectionscatter(m, diry);
-            ghr.setGhostDirectionscatter(m, dirr);
-        }
+            Game g;
 
-        g.logic(m, P, ghr);
-        g.logic(m, P, ghy);
+            system("cls");
+            Map m;
+            Pacman P;
+            // YellowGhost ghy(5,19);
+            // RedGhost ghr(14,10);
 
-        P.Pacmove();
+            YellowGhost ghy(1, 1);
+            RedGhost ghr(1, 2);
+            Stats s;
 
-        g.Ghostcollision(P, ghr, m);
-        g.Ghostcollision(P, ghy, m);
+            int countTime = 0;
+            P.x = 26;
+            P.y = 5;
 
-        g.fruitfinish(m);
-
-        g.starFruitCollision(m, P, ghy, ghr);
-        // Time period for which it can kill and after time ends, it resets
-        if (countTime - isStartkill == 56 && (ghy.isKillable == true || ghr.isKillable == true))
-        {
-            ghr.isKillable = false;
-            ghy.isKillable = false;
-        }
-
-        if (countTime - isStarTrapped == 26 && (ghy.isTrapped == true || ghr.isTrapped == true))
-        {
-            if (ghy.isTrapped == true)
+            g.hideCursor();
+            m.inialiseMap("map4.txt"); // fetchs it
+            int isStartkill = 0;
+            int isStarTrapped = 0;
+            while (!g.gameOver)
             {
-                ghy.x = m.width / 2;
-                ghy.y = (m.height / 2) - 3; //goes up
-                ghy.isTrapped = false;
-            }
+                if ((ghy.isKillable == true || ghr.isKillable == true) && g.firstFruitTime == true)
+                {
+                    isStartkill = countTime;
+                    g.firstFruitTime = false;
+                }
+                if ((ghy.isTrapped == true || ghr.isTrapped == true) && g.firstTrappedTime == true)
+                {
+                    isStarTrapped = countTime;
+                    g.firstTrappedTime = false;
+                }
+                countTime++;
+                g.clearScreen();
 
-            if (ghr.isTrapped == true)
-            {
-                ghr.x = m.width / 2;
-                ghr.y = (m.height / 2) + 4; //goes down
-                ghr.isTrapped = false;
+                if ((P.dirPacman == UP && ghy.dirGhost == UP && ghr.dirGhost == UP) || (P.dirPacman == DOWN && ghy.dirGhost == UP && ghr.dirGhost == UP))
+                {
+                    Sleep(150); // increasing the delay (inbuilt from library)
+                }
+                else
+                {
+                    Sleep(60); // delay for 40ms  (inbuilt from library)
+                }
+                P.PacInput();
+                vector<Direction> diry = g.possibleDirection(m, ghy);
+                vector<Direction> dirr = g.possibleDirection(m, ghr);
+
+                int state = (countTime / 56) % 2;
+                if (ghy.isKillable)
+                {
+                    ghy.setGhostDirectionFrightened();
+                    ghr.setGhostDirectionFrightened();
+                }
+                else if (state)
+                {
+                    ghy.chase(P, diry);
+                    ghr.chase(P, dirr);
+                }
+                else
+                {
+                    ghy.setGhostDirectionscatter(m, diry);
+                    ghr.setGhostDirectionscatter(m, dirr);
+                }
+
+                g.logic(m, P, ghr);
+                g.logic(m, P, ghy);
+
+                P.Pacmove();
+
+                g.Ghostcollision(P, ghr, m);
+                g.Ghostcollision(P, ghy, m);
+
+                g.fruitfinish(m);
+
+                g.starFruitCollision(m, P, ghy, ghr);
+                // Time period for which it can kill and after time ends, it resets
+                if (countTime - isStartkill == 56 && (ghy.isKillable == true || ghr.isKillable == true))
+                {
+                    ghr.isKillable = false;
+                    ghy.isKillable = false;
+                }
+
+                if (countTime - isStarTrapped == 26 && (ghy.isTrapped == true || ghr.isTrapped == true))
+                {
+                    if (ghy.isTrapped == true)
+                    {
+                        ghy.x = m.width / 2;
+                        ghy.y = (m.height / 2) - 3; // goes up
+                        ghy.isTrapped = false;
+                    }
+
+                    if (ghr.isTrapped == true)
+                    {
+                        ghr.x = m.width / 2;
+                        ghr.y = (m.height / 2) + 4; // goes down
+                        ghr.isTrapped = false;
+                    }
+                }
+
+                ghr.Ghostmove();
+                ghy.Ghostmove();
+
+                m.displayMap(P, ghy, ghr);
+                s.showStats(g);
+
+                // cout << countTime << endl;
             }
+            main.highScoreAdding(name, g.score);
         }
+        else if (ch == 'n')
+        {
+            cout << ORANGE << "Visit Again! \n"
+                 << RESET;
+            exit(0);
+        }
+        else if (ch == 'h')
+        {
 
-        ghr.Ghostmove();
-        ghy.Ghostmove();
-
-        m.displayMap(P, ghy, ghr);
-        s.showStats(g);
-
-        // cout << countTime << endl;
+            main.highscoreDisplay(name);
+        }
+        if (ch == 'y')
+        {
+            cout << "Do you want to continue playing? y/n/h \n";
+        }
+        if (ch == 'h')
+        {
+            cout << "Do you want to continue playing? y/n/h \n";
+        }
     }
     return 0;
 }
