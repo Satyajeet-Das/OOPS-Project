@@ -41,23 +41,23 @@ public:
     {
         if (GetAsyncKeyState(0x57) & 0x8000) // W key
         {
+
             dirPacman = UP;
-            // std::cout << "W key pressed\n";
         }
         if (GetAsyncKeyState(0x53) & 0x8000) // S key
         {
+
             dirPacman = DOWN;
-            // std::cout << "S key pressed\n";
         }
         if (GetAsyncKeyState(0x41) & 0x8000) // A key
         {
+
             dirPacman = LEFT;
-            // std::cout << "A key pressed\n";
         }
         if (GetAsyncKeyState(0x44) & 0x8000) // D key
         {
+
             dirPacman = RIGHT;
-            // std::cout << "D key pressed\n";
         }
 
         // if (_kbhit())
@@ -79,26 +79,7 @@ public:
         //     }
         // }
 
-        // if (GetAsyncKeyState(VK_UP) & 0x8000)
-        // {
-        //     dirPacman = UP;
-        //     // std::cout << "Up arrow pressed\n";
-        // }
-        // if (GetAsyncKeyState(VK_DOWN) & 0x8000)
-        // {
-        //     dirPacman = DOWN;
-        //     // std::cout << "Down arrow pressed\n";
-        // }
-        // if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-        // {
-        //     dirPacman = LEFT;
-        //     // std::cout << "Left arrow pressed\n";
-        // }
-        // if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-        // {
-        //     dirPacman = RIGHT;
-        //     // std::cout << "Right arrow pressed\n";
-        // }
+        FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
     }
     void Pacmove()
     {
@@ -804,7 +785,7 @@ public:
             }
             if (tempname == name)
             {
-                cout << "Your scores are:\n";
+                cout <<MAGENTA<< "Your scores are:\n"<<RESET;
                 cout << line << "\n";
             }
         }
@@ -931,6 +912,7 @@ int main()
 
                 // cout << countTime << endl;
             }
+            // _getch
             main.highScoreAdding(g.score);
         }
         else if (ch == 'n')
