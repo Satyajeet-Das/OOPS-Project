@@ -39,24 +39,45 @@ public:
 
     void PacInput()
     {
-        if (_kbhit())
+        if (GetAsyncKeyState(0x57) & 0x8000) // W key
         {
-            switch (_getch())
-            {
-            case 'w':
-                dirPacman = UP;
-                break;
-            case 'a':
-                dirPacman = LEFT;
-                break;
-            case 's':
-                dirPacman = DOWN;
-                break;
-            case 'd':
-                dirPacman = RIGHT;
-                break;
-            }
+            dirPacman = UP;
+            // std::cout << "W key pressed\n";
         }
+        if (GetAsyncKeyState(0x53) & 0x8000) // S key
+        {
+            dirPacman = DOWN;
+            // std::cout << "S key pressed\n";
+        }
+        if (GetAsyncKeyState(0x41) & 0x8000) // A key
+        {
+            dirPacman = LEFT;
+            // std::cout << "A key pressed\n";
+        }
+        if (GetAsyncKeyState(0x44) & 0x8000) // D key
+        {
+            dirPacman = RIGHT;
+            // std::cout << "D key pressed\n";
+        }
+
+        // if (_kbhit())
+        // {
+        //     switch (_getch())
+        //     {
+        //     case 'w':
+        //         dirPacman = UP;
+        //         break;
+        //     case 'a':
+        //         dirPacman = LEFT;
+        //         break;
+        //     case 's':
+        //         dirPacman = DOWN;
+        //         break;
+        //     case 'd':
+        //         dirPacman = RIGHT;
+        //         break;
+        //     }
+        // }
 
         // if (GetAsyncKeyState(VK_UP) & 0x8000)
         // {
@@ -743,9 +764,10 @@ public:
         cout << BRIGHT_RED << "\nHello " << YELLOW << name << RESET << RED << " welcome to our pacman game :-) !!!\n"
              << RESET;
         // cout << "Enter y/n/h \n";
-        cout <<CYAN<< "Enter 'y' to play the game\n";
+        cout << CYAN << "Enter 'y' to play the game\n";
         cout << "Enter 'n' to exit the game\n";
-        cout << "Enter 's' to display the scores\n"<<RESET;
+        cout << "Enter 's' to display the scores\n"
+             << RESET;
     }
     void highScoreAdding(int score)
     {
@@ -798,7 +820,7 @@ int main()
 
     while (1)
     {
-        
+
         cin >> ch;
         if (ch == 'y')
         {
@@ -925,18 +947,19 @@ int main()
         if (ch == 'y')
         {
             // cout << "Do you want to continue playing? y/n/s \n";
-            cout<<CYAN << "\nEnter 'y' to play the game\n";
+            cout << CYAN << "\nEnter 'y' to play the game\n";
             cout << "Enter 'n' to exit the game\n";
-            cout << "Enter 's' to display the scores\n"<<RESET;
+            cout << "Enter 's' to display the scores\n"
+                 << RESET;
         }
         if (ch == 's')
         {
             // cout << "Do you want to continue playing? y/n/s \n";
-            cout <<CYAN<< "\nEnter 'y' to play the game\n";
+            cout << CYAN << "\nEnter 'y' to play the game\n";
             cout << "Enter 'n' to exit the game\n";
-            cout << "Enter 's' to display the scores\n"<<RESET;
+            cout << "Enter 's' to display the scores\n"
+                 << RESET;
         }
-     
     }
     return 0;
 }
