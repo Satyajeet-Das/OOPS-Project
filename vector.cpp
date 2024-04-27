@@ -39,45 +39,45 @@ public:
 
     void PacInput()
     {
-        // if (_kbhit())
-        // {
-        //     switch (_getch())
-        //     {
-        //     case 'w':
-        //         dirPacman = UP;
-        //         break;
-        //     case 'a':
-        //         dirPacman = LEFT;
-        //         break;
-        //     case 's':
-        //         dirPacman = DOWN;
-        //         break;
-        //     case 'd':
-        //         dirPacman = RIGHT;
-        //         break;
-        //     }
-        // }
+        if (_kbhit())
+        {
+            switch (_getch())
+            {
+            case 'w':
+                dirPacman = UP;
+                break;
+            case 'a':
+                dirPacman = LEFT;
+                break;
+            case 's':
+                dirPacman = DOWN;
+                break;
+            case 'd':
+                dirPacman = RIGHT;
+                break;
+            }
+        }
 
-        if (GetAsyncKeyState(VK_UP) & 0x8000)
-        {
-            dirPacman = UP;
-            // std::cout << "Up arrow pressed\n";
-        }
-        if (GetAsyncKeyState(VK_DOWN) & 0x8000)
-        {
-            dirPacman = DOWN;
-            // std::cout << "Down arrow pressed\n";
-        }
-        if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-        {
-            dirPacman = LEFT;
-            // std::cout << "Left arrow pressed\n";
-        }
-        if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-        {
-            dirPacman = RIGHT;
-            // std::cout << "Right arrow pressed\n";
-        }
+        // if (GetAsyncKeyState(VK_UP) & 0x8000)
+        // {
+        //     dirPacman = UP;
+        //     // std::cout << "Up arrow pressed\n";
+        // }
+        // if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+        // {
+        //     dirPacman = DOWN;
+        //     // std::cout << "Down arrow pressed\n";
+        // }
+        // if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+        // {
+        //     dirPacman = LEFT;
+        //     // std::cout << "Left arrow pressed\n";
+        // }
+        // if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+        // {
+        //     dirPacman = RIGHT;
+        //     // std::cout << "Right arrow pressed\n";
+        // }
     }
     void Pacmove()
     {
@@ -742,7 +742,10 @@ public:
         system("cls");
         cout << BRIGHT_RED << "\nHello " << YELLOW << name << RESET << RED << " welcome to our pacman game :-) !!!\n"
              << RESET;
-        cout << "Enter y/n/h \n";
+        // cout << "Enter y/n/h \n";
+        cout <<CYAN<< "Enter 'y' to play the game\n";
+        cout << "Enter 'n' to exit the game\n";
+        cout << "Enter 's' to display the scores\n"<<RESET;
     }
     void highScoreAdding(int score)
     {
@@ -795,7 +798,7 @@ int main()
 
     while (1)
     {
-
+        
         cin >> ch;
         if (ch == 'y')
         {
@@ -914,19 +917,26 @@ int main()
                  << RESET;
             exit(0);
         }
-        else if (ch == 'h')
+        else if (ch == 's')
         {
 
             main.highscoreDisplay();
         }
         if (ch == 'y')
         {
-            cout << "Do you want to continue playing? y/n/h \n";
+            // cout << "Do you want to continue playing? y/n/s \n";
+            cout<<CYAN << "\nEnter 'y' to play the game\n";
+            cout << "Enter 'n' to exit the game\n";
+            cout << "Enter 's' to display the scores\n"<<RESET;
         }
-        if (ch == 'h')
+        if (ch == 's')
         {
-            cout << "Do you want to continue playing? y/n/h \n";
+            // cout << "Do you want to continue playing? y/n/s \n";
+            cout <<CYAN<< "\nEnter 'y' to play the game\n";
+            cout << "Enter 'n' to exit the game\n";
+            cout << "Enter 's' to display the scores\n"<<RESET;
         }
+     
     }
     return 0;
 }
