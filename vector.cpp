@@ -729,15 +729,22 @@ public:
 };
 class mainMenu
 {
+    string name;
+
 public:
-    void homepg(string n)
+    void getNameUser()
+    {
+        cout << "Enter your name\n";
+        cin >> name;
+    }
+    void homepg()
     {
         system("cls");
-        cout << BRIGHT_RED << "\nHello " << YELLOW << n << RESET << RED << " welcome to our pacman game :-) !!!\n"
+        cout << BRIGHT_RED << "\nHello " << YELLOW << name << RESET << RED << " welcome to our pacman game :-) !!!\n"
              << RESET;
         cout << "Enter y/n/h \n";
     }
-    void highScoreAdding(string n, int score)
+    void highScoreAdding(int score)
     {
 
         ofstream highscores("highscore.txt", ios::app); // opens the file in the output in the append mode
@@ -746,12 +753,12 @@ public:
             cerr << "Error opening file" << endl;
             exit(1);
         }
-        highscores << n << " " << score << "\n"
+        highscores << name << " " << score << "\n"
                    << "\n";
 
         highscores.close();
     }
-    void highscoreDisplay(string n)
+    void highscoreDisplay()
     {
         ifstream high("highscore.txt");
         string line;
@@ -770,7 +777,7 @@ public:
                     break;
                 }
             }
-            if (tempname == n)
+            if (tempname == name)
             {
                 cout << "Your scores are:\n";
                 cout << line << "\n";
@@ -782,10 +789,9 @@ int main()
 {
     mainMenu main;
     char ch;
-    string name;
-    cout << "Enter your name\n";
-    cin >> name;
-    main.homepg(name);
+    main.getNameUser();
+
+    main.homepg();
 
     while (1)
     {
@@ -900,7 +906,7 @@ int main()
 
                 // cout << countTime << endl;
             }
-            main.highScoreAdding(name, g.score);
+            main.highScoreAdding(g.score);
         }
         else if (ch == 'n')
         {
@@ -911,7 +917,7 @@ int main()
         else if (ch == 'h')
         {
 
-            main.highscoreDisplay(name);
+            main.highscoreDisplay();
         }
         if (ch == 'y')
         {
